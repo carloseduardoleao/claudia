@@ -57,7 +57,7 @@ const minimist = require('minimist'),
 		}
 		if (args['proxy']) {
 			AWS.config.update({
-		  	httpOptions: { agent: proxy(process.env.http_proxy) }
+		  	  httpOptions: { agent: proxy(args['proxy']) }
 			});
 		}
 		commands[command](args, logger).then(result => {
