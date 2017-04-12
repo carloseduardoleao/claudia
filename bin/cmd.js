@@ -2,6 +2,7 @@
 const minimist = require('minimist'),
 	shell = require('shelljs'),
 	path = require('path'),
+	proxy = require('proxy-agent'),
 	readCommands = require('../src/util/read-commands'),
 	ConsoleLogger = require('../src/util/console-logger'),
 	docTxt = require('../src/util/doc-txt'),
@@ -17,6 +18,11 @@ const minimist = require('minimist'),
 	},
 	main = function () {
 		'use strict';
+
+		AWS.config.update({
+			httpOptions: { agent: proxy(process.env.http_proxy) }
+		});
+    
 		const args = readArgs(),
 			commands = readCommands(),
 			command = args._ && args._.length && args._[0],
@@ -48,6 +54,11 @@ const minimist = require('minimist'),
 		}
 		if (args['aws-client-timeout']) {
 			AWS.config.httpOptions = { timeout: args['aws-client-timeout'] };
+		}
+		if (args['proxy']) {
+			AWS.config.update({
+		  	httpOptions: { agent: proxy(process.env.http_proxy) }
+			});
 		}
 		commands[command](args, logger).then(result => {
 			if (result) {
